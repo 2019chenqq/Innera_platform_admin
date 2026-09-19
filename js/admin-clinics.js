@@ -4,6 +4,7 @@
 
   let clinics = [];
 
+
   function escapeHtml(value) {
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -13,6 +14,7 @@
       .replaceAll("'", "&#039;");
   }
 
+
   function getClinicName(clinic) {
     return (
       clinic.name ||
@@ -20,6 +22,7 @@
       "未命名院所"
     );
   }
+
 
   function getClinicCode(clinic) {
     return (
@@ -29,9 +32,11 @@
     );
   }
 
+
   function getClinicStatus(clinic) {
     return clinic.status || "active";
   }
+
 
   function renderStats() {
     const clinicCount =
@@ -51,10 +56,12 @@
           "active"
       ).length;
 
+
     if (clinicCount) {
       clinicCount.textContent =
         clinics.length;
     }
+
 
     if (activeClinicCount) {
       activeClinicCount.textContent =
@@ -62,15 +69,18 @@
     }
   }
 
+
   function renderClinics() {
     const clinicList =
       document.getElementById(
         "clinicList"
       );
 
+
     if (!clinicList) {
       return;
     }
+
 
     if (clinics.length === 0) {
       clinicList.innerHTML = `
@@ -81,6 +91,7 @@
 
       return;
     }
+
 
     clinicList.innerHTML =
       clinics
@@ -95,15 +106,29 @@
           const status =
             getClinicStatus(clinic);
 
+          const isActive =
+            status === "active";
+
           const statusText =
-            status === "active"
+            isActive
               ? "啟用中"
-              : "停用";
+              : "已停用";
 
           const statusClass =
-            status === "active"
+            isActive
               ? ""
               : "inactive";
+
+          const actionText =
+            isActive
+              ? "停用"
+              : "重新啟用";
+
+          const actionClass =
+            isActive
+              ? "danger"
+              : "restore";
+
 
           return `
             <div
@@ -119,9 +144,11 @@
                 </div>
               </div>
 
+
               <div class="clinic-code">
                 ${escapeHtml(code)}
               </div>
+
 
               <div>
                 <span
@@ -131,19 +158,175 @@
                 </span>
               </div>
 
+
+              <div class="clinic-actions">
+
+                <button
+                  type="button"
+                  class="clinic-status-button ${actionClass}"
+                  data-clinic-id="${escapeHtml(
+                    clinic.id
+                  )}"
+                  data-clinic-name="${escapeHtml(
+                    name
+                  )}"
+                  data-status="${escapeHtml(
+                    status
+                  )}"
+                >
+                  ${actionText}
+                </button>
+
+              </div>
+
             </div>
           `;
         })
         .join("");
   }
 
+
+  async function updateClinicStatus(
+    clinicId,
+    nextStatus,
+    button
+  ) {
+
+    try {
+
+      if (button) {
+        button.disabled = true;
+        button.textContent =
+          nextStatus === "inactive"
+            ? "停用中..."
+            : "啟用中...";
+      }
+
+
+      const functions =
+        firebase
+          .app()
+          .functions("asia-east1");
+
+
+      const setClinicStatus =
+        functions.httpsCallable(
+          "setClinicStatus"
+        );
+
+
+      const result =
+        await setClinicStatus({
+          clinicId,
+          status: nextStatus
+        });
+
+
+      console.log(
+        "[Admin] 更新院所狀態成功",
+        result.data
+      );
+
+
+      await loadClinics();
+
+
+    } catch (error) {
+
+      console.error(
+        "[Admin] 更新院所狀態失敗:",
+        error
+      );
+
+
+      alert(
+        error.message ||
+        "更新院所狀態失敗。"
+      );
+
+
+      if (button) {
+        button.disabled = false;
+        button.textContent =
+          nextStatus === "inactive"
+            ? "停用"
+            : "重新啟用";
+      }
+    }
+  }
+
+
+  async function handleClinicAction(
+    event
+  ) {
+
+    const button =
+      event.target.closest(
+        ".clinic-status-button"
+      );
+
+
+    if (!button) {
+      return;
+    }
+
+
+    const clinicId =
+      button.dataset.clinicId;
+
+    const clinicName =
+      button.dataset.clinicName;
+
+    const currentStatus =
+      button.dataset.status;
+
+
+    if (!clinicId) {
+      return;
+    }
+
+
+    const nextStatus =
+      currentStatus === "active"
+        ? "inactive"
+        : "active";
+
+
+    const confirmMessage =
+      nextStatus === "inactive"
+        ? `確定要停用「${clinicName}」嗎？\n\n停用後，該院所將無法繼續使用醫療端系統。`
+        : `確定要重新啟用「${clinicName}」嗎？`;
+
+
+    const confirmed =
+      window.confirm(
+        confirmMessage
+      );
+
+
+    if (!confirmed) {
+      return;
+    }
+
+
+    await updateClinicStatus(
+      clinicId,
+      nextStatus,
+      button
+    );
+  }
+
+
   async function loadClinics() {
+
     const clinicList =
       document.getElementById(
         "clinicList"
       );
 
+
     try {
+
       if (clinicList) {
         clinicList.innerHTML = `
           <div class="empty-state">
@@ -152,45 +335,62 @@
         `;
       }
 
+
       const db =
         window.InneraAdminCore.getDb();
+
 
       const snapshot =
         await db
           .collection("clinics")
           .get();
 
+
       clinics =
-        snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data()
-        }));
+        snapshot.docs.map(
+          (doc) => ({
+            id: doc.id,
+            ...doc.data()
+          })
+        );
+
 
       clinics.sort((a, b) => {
-        const nameA =
-          getClinicName(a);
 
-        const nameB =
-          getClinicName(b);
+        const codeA =
+          getClinicCode(a);
 
-        return nameA.localeCompare(
-          nameB,
-          "zh-Hant"
-        );
+        const codeB =
+          getClinicCode(b);
+
+
+        return String(codeA)
+          .localeCompare(
+            String(codeB),
+            "zh-Hant",
+            {
+              numeric: true
+            }
+          );
       });
+
 
       renderStats();
       renderClinics();
+
 
       console.log(
         `[Admin] 已載入 ${clinics.length} 間院所`
       );
 
+
     } catch (error) {
+
       console.error(
         "[Admin] 載入 clinics 失敗:",
         error
       );
+
 
       if (clinicList) {
         clinicList.innerHTML = `
@@ -202,19 +402,40 @@
     }
   }
 
+
   function getClinics() {
     return [...clinics];
   }
+
 
   window.InneraAdminClinics = {
     load: loadClinics,
     getAll: getClinics
   };
 
+
   document.addEventListener(
     "innera:admin-ready",
     () => {
       loadClinics();
+    }
+  );
+
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+      const clinicList =
+        document.getElementById(
+          "clinicList"
+        );
+
+
+      clinicList?.addEventListener(
+        "click",
+        handleClinicAction
+      );
     }
   );
 

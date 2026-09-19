@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>心域 Innera｜平台管理</title>
+
+  <link rel="stylesheet" href="./css/admin.css">
+</head>
+
+<body>
+
+  <div class="admin-layout">
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+
+      <div class="admin-brand">
+        <div class="brand-title">心域 Innera</div>
+        <div class="brand-subtitle">平台管理</div>
+      </div>
+
+      <nav class="admin-nav">
+
+        <button
+          class="admin-nav-item active"
+          data-page="clinics"
+        >
+          院所管理
+        </button>
+
+        <button
+          class="admin-nav-item"
+          data-page="settings"
+        >
+          平台設定
+        </button>
+
+      </nav>
+
+      <div class="admin-sidebar-footer">
+        <button id="adminLogoutButton" class="logout-button">
+          登出
+        </button>
+      </div>
+
+    </aside>
+
+
+    <!-- Main -->
+    <main class="admin-main">
+
+      <header class="admin-header">
+
+        <div>
+          <h1>院所管理</h1>
+          <p>管理使用心域醫療端系統的合作院所。</p>
+        </div>
+
+        <button
+          id="openCreateClinicButton"
+          class="primary-button"
+        >
+          ＋ 新增院所
+        </button>
+
+      </header>
+
+
+      <!-- Stats -->
+      <section class="stats-grid">
+
+        <div class="stat-card">
+          <span class="stat-label">院所總數</span>
+          <strong id="clinicCount">0</strong>
+        </div>
+
+        <div class="stat-card">
+          <span class="stat-label">啟用中</span>
+          <strong id="activeClinicCount">0</strong>
+        </div>
+
+      </section>
+
+
+      <!-- Clinic list -->
+      <section class="clinic-section">
+
+        <div class="section-header">
+          <h2>院所列表</h2>
+        </div>
+
+        <div id="clinicList" class="clinic-list">
+
+          <div class="empty-state">
+            正在載入院所資料...
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- Create clinic modal -->
+  <div
+    id="createClinicModal"
+    class="modal-backdrop hidden"
+  >
+
+    <div class="modal">
+
+      <div class="modal-header">
+
+        <div>
+          <h2>新增院所</h2>
+          <p>建立新的合作院所。</p>
+        </div>
+
+        <button
+          id="closeCreateClinicButton"
+          class="icon-button"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <form id="createClinicForm">
+
+        <div class="form-group">
+          <label for="clinicName">
+            院所名稱
+          </label>
+
+          <input
+            id="clinicName"
+            name="clinicName"
+            type="text"
+            placeholder="例如：晴天身心診所"
+            required
+          >
+        </div>
+
+
+        <div class="form-group">
+          <label for="adminName">
+            院所管理員姓名
+          </label>
+
+          <input
+            id="adminName"
+            name="adminName"
+            type="text"
+            placeholder="例如：王醫師"
+            required
+          >
+        </div>
+
+
+        <div class="form-group">
+          <label for="adminEmail">
+            登入 Email
+          </label>
+
+          <input
+            id="adminEmail"
+            name="adminEmail"
+            type="email"
+            placeholder="admin@example.com"
+            required
+          >
+        </div>
+
+
+        <div class="form-group">
+          <label for="temporaryPassword">
+            暫時密碼
+          </label>
+
+          <input
+            id="temporaryPassword"
+            name="temporaryPassword"
+            type="password"
+            minlength="6"
+            required
+          >
+
+          <small>
+            下一階段會改由後端安全建立 Firebase Auth 帳號。
+          </small>
+        </div>
+
+
+        <div
+          id="createClinicMessage"
+          class="form-message"
+        ></div>
+
+
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            id="cancelCreateClinicButton"
+            class="secondary-button"
+          >
+            取消
+          </button>
+
+          <button
+            type="submit"
+            class="primary-button"
+          >
+            建立院所
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+ <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-functions-compat.js"></script>
+
+<script src="./js/firebase-config.js"></script>
+
+<script src="./js/admin-core.js"></script>
+<script src="./js/admin-clinics.js"></script>
+<script src="./js/admin-create-clinic.js"></script>
+</body>
+</html>

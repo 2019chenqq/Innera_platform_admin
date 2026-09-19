@@ -239,7 +239,8 @@ body {
 
   grid-template-columns:
     minmax(220px, 1.6fr)
-    minmax(150px, 1fr)
+    minmax(130px, 1fr)
+    110px
     120px;
 
   align-items: center;
@@ -284,7 +285,63 @@ body {
   background: #f2f3f5;
   color: #7a8392;
 }
+.clinic-actions {
+  display: flex;
+  justify-content: flex-end;
+}
 
+
+.clinic-status-button {
+  min-width: 86px;
+
+  padding: 8px 12px;
+
+  border-radius: 8px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    opacity 0.15s ease;
+}
+
+
+.clinic-status-button.danger {
+  background: #fff;
+  color: #b54747;
+
+  border: 1px solid #e8caca;
+}
+
+
+.clinic-status-button.danger:hover {
+  background: #fff5f5;
+  border-color: #dbabab;
+}
+
+
+.clinic-status-button.restore {
+  background: #fff;
+  color: #277651;
+
+  border: 1px solid #c7ded2;
+}
+
+
+.clinic-status-button.restore:hover {
+  background: #f2faf6;
+  border-color: #a9ceba;
+}
+
+
+.clinic-status-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
 .empty-state {
   padding: 50px 24px;
 
@@ -485,4 +542,12 @@ body {
 
     gap: 5px;
   }
+  @media (max-width: 768px) {
+
+  .clinic-actions {
+    justify-content: flex-start;
+    margin-top: 8px;
+  }
+
+}
 }
