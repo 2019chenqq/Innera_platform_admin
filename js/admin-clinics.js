@@ -129,6 +129,10 @@
               ? "danger"
               : "restore";
 
+          const canResendInitialAdminInvite =
+            isActive &&
+            !clinic.primaryAdminUid &&
+            Boolean(clinic.initialAdminInviteId);
 
           return `
             <div
@@ -161,6 +165,25 @@
 
               <div class="clinic-actions">
 
+                ${
+                  canResendInitialAdminInvite
+                    ? `
+                      <button
+                        type="button"
+                        class="clinic-resend-invite-button restore"
+                        data-clinic-id="${escapeHtml(
+                          clinic.id
+                        )}"
+                        data-clinic-name="${escapeHtml(
+                          name
+                        )}"
+                      >
+                        重寄啟用信
+                      </button>
+                    `
+                    : ""
+                }
+
                 <button
                   type="button"
                   class="clinic-status-button ${actionClass}"
@@ -178,8 +201,7 @@
                 </button>
 
               </div>
-
-            </div>
+              </div>
           `;
         })
         .join("");
@@ -255,10 +277,139 @@
     }
   }
 
+  async function resendInitialAdminInvite(
+    clinicId,
+    clinicName,
+    button
+  ) {
+    const confirmed =
+      window.confirm(
+        `確定要重新寄送「${clinicName}」第一位管理員的帳號啟用信嗎？`
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      if (button) {
+        button.disabled = true;
+        button.textContent =
+          "寄送中...";
+      }
+
+      const functions =
+        firebase
+          .app()
+          .functions("asia-east1");
+
+      const resendInvite =
+        functions.httpsCallable(
+          "resendInitialAdminInvite"
+        );
+
+      const result =
+        await resendInvite({
+          clinicId
+        });
+
+      const {
+        inviteId,
+        token,
+        adminEmail
+      } = result.data || {};
+
+      if (
+        !inviteId ||
+        !token ||
+        !adminEmail
+      ) {
+        throw new Error(
+          "重新產生啟用邀請失敗。"
+        );
+      }
+
+      const activationUrl =
+        new URL(
+          "https://2019chenqq.github.io/Innera_clinician/staff-activate.html"
+        );
+
+      activationUrl.searchParams.set(
+        "invite",
+        inviteId
+      );
+
+      activationUrl.searchParams.set(
+        "token",
+        token
+      );
+
+      await firebase
+        .auth()
+        .sendSignInLinkToEmail(
+          adminEmail,
+          {
+            url:
+              activationUrl.toString(),
+
+            handleCodeInApp:
+              true
+          }
+        );
+
+      alert(
+        `「${clinicName}」的管理員啟用信已重新寄出。`
+      );
+
+    } catch (error) {
+      console.error(
+        "[Admin] 重新寄送管理員啟用信失敗:",
+        error
+      );
+
+      alert(
+        error.message ||
+        "重新寄送管理員啟用信失敗。"
+      );
+
+    } finally {
+      if (button) {
+        button.disabled = false;
+        button.textContent =
+          "重寄啟用信";
+      }
+    }
+  }
 
   async function handleClinicAction(
     event
   ) {
+
+    const resendButton =
+      event.target.closest(
+        ".clinic-resend-invite-button"
+      );
+
+    if (resendButton) {
+      const clinicId =
+        resendButton.dataset.clinicId;
+
+      const clinicName =
+        resendButton.dataset.clinicName;
+
+      if (!clinicId) {
+        return;
+      }
+
+      await resendInitialAdminInvite(
+        clinicId,
+        clinicName,
+        resendButton
+      );
+
+      return;
+    }
+
 
     const button =
       event.target.closest(

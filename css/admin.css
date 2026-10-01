@@ -241,7 +241,7 @@ body {
     minmax(220px, 1.6fr)
     minmax(130px, 1fr)
     110px
-    120px;
+    minmax(220px, auto);
 
   align-items: center;
 
@@ -288,10 +288,14 @@ body {
 .clinic-actions {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
 }
 
 
-.clinic-status-button {
+.clinic-status-button,
+.clinic-resend-invite-button {
   min-width: 86px;
 
   padding: 8px 12px;
@@ -302,6 +306,8 @@ body {
   font-weight: 600;
 
   cursor: pointer;
+
+  white-space: nowrap;
 
   transition:
     background 0.15s ease,
@@ -324,7 +330,8 @@ body {
 }
 
 
-.clinic-status-button.restore {
+.clinic-status-button.restore,
+.clinic-resend-invite-button.restore {
   background: #fff;
   color: #277651;
 
@@ -332,16 +339,19 @@ body {
 }
 
 
-.clinic-status-button.restore:hover {
+.clinic-status-button.restore:hover,
+.clinic-resend-invite-button.restore:hover {
   background: #f2faf6;
   border-color: #a9ceba;
 }
 
 
-.clinic-status-button:disabled {
+.clinic-status-button:disabled,
+.clinic-resend-invite-button:disabled {
   opacity: 0.55;
   cursor: not-allowed;
 }
+
 .empty-state {
   padding: 50px 24px;
 
@@ -542,7 +552,6 @@ body {
 
     gap: 5px;
   }
-  @media (max-width: 768px) {
 
   .clinic-actions {
     justify-content: flex-start;
