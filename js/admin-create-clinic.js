@@ -118,15 +118,6 @@
           .value
           .trim();
 
-
-      const password =
-        document
-          .getElementById(
-            "temporaryPassword"
-          )
-          .value;
-
-
       const submitButton =
         form.querySelector(
           'button[type="submit"]'
@@ -167,7 +158,6 @@
             clinicName,
             adminName,
             email,
-            password
           });
 
 
@@ -176,10 +166,75 @@
           result.data
         );
 
+        const {
+          inviteId,
+          token,
+          adminEmail,
+          clinicCode
+        } = result.data || {};
+
+        if (
+          !inviteId ||
+          !token ||
+          !adminEmail
+        ) {
+          throw new Error(
+            "院所已建立，但啟用邀請資料不完整。"
+          );
+        }
+
+
+        const activationUrl =
+          new URL(
+            "https://2019chenqq.github.io/Innera_clinician/staff-activate.html"
+          );
+
+        activationUrl.searchParams.set(
+          "invite",
+          inviteId
+        );
+
+        activationUrl.searchParams.set(
+          "token",
+          token
+        );
+
+
+        let emailSent = false;
+
+        try {
+          await firebase
+            .auth()
+            .sendSignInLinkToEmail(
+              adminEmail,
+              {
+                url:
+                  activationUrl.toString(),
+
+                handleCodeInApp:
+                  true
+              }
+            );
+
+          emailSent = true;
+
+        } catch (emailError) {
+          console.error(
+            "[Admin] activation email failed",
+            emailError
+          );
+        }
+
 
         if (message) {
-          message.textContent =
-            `建立成功：${result.data.clinicCode}`;
+          if (emailSent) {
+            message.textContent =
+              `院所建立成功（${clinicCode}），管理員啟用信已寄出。`;
+
+          } else {
+            message.textContent =
+              `院所已建立（${clinicCode}），但管理員啟用信寄送失敗。`;
+          }
         }
 
 
@@ -188,10 +243,12 @@
           ?.load();
 
 
-        setTimeout(
-          closeModal,
-          800
-        );
+        if (emailSent) {
+          setTimeout(
+            closeModal,
+            1200
+          );
+        }
 
 
       } catch (error) {
@@ -210,12 +267,13 @@
           error.code
         ) {
 
-          case "functions/already-exists":
+        case "functions/already-exists":
 
-            text =
-              "這個 Email 已經有帳號。";
+          text =
+            error.message ||
+            "已有相同的待處理資料。";
 
-            break;
+          break;
 
 
           case "functions/permission-denied":

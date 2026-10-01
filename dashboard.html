@@ -118,7 +118,7 @@
 
         <div>
           <h2>新增院所</h2>
-          <p>建立新的合作院所。</p>
+          <p>建立院所後，系統會寄送帳號啟用連結給第一位院所管理員。</p>
         </div>
 
         <button
@@ -176,26 +176,6 @@
             required
           >
         </div>
-
-
-        <div class="form-group">
-          <label for="temporaryPassword">
-            暫時密碼
-          </label>
-
-          <input
-            id="temporaryPassword"
-            name="temporaryPassword"
-            type="password"
-            minlength="6"
-            required
-          >
-
-          <small>
-            下一階段會改由後端安全建立 Firebase Auth 帳號。
-          </small>
-        </div>
-
 
         <div
           id="createClinicMessage"
