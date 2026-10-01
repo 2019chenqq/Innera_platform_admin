@@ -15,6 +15,8 @@ const {
 } = require("firebase-admin/firestore");
 
 
+const clinicDefaults = require("./src/clinic/defaults");
+
 initializeApp();
 
 const db = getFirestore();
@@ -229,6 +231,7 @@ exports.createClinic =
             clinicCode,
 
             status: "active",
+            ...clinicDefaults,
 
             createdAt:
               FieldValue.serverTimestamp(),
@@ -253,29 +256,32 @@ exports.createClinic =
 
 
         batch.set(
-          staffRef,
-          {
-            clinicId:
-              clinicRef.id,
+            staffRef,
+            {
+                clinicId:
+                clinicRef.id,
 
-            name:
-              adminName,
+                name:
+                adminName,
 
-            email,
+                email,
 
-            role:
-              "clinic_admin",
+                role:
+                "admin",
 
-            status:
-              "active",
+                active:
+                true,
 
-            createdAt:
-              FieldValue.serverTimestamp(),
+                status:
+                "active",
 
-            createdBy:
-              callerUid
-          }
-        );
+                createdAt:
+                FieldValue.serverTimestamp(),
+
+                createdBy:
+                callerUid
+            }
+            );
 
 
         await batch.commit();
