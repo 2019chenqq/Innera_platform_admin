@@ -11,10 +11,8 @@ window.INNERA_FIREBASE_CONFIG = {
   appId: "1:510475967619:web:c21c9d28fd763507c2cfb6"
 };
 
-// 目前測試用院所 ID，要跟 App 端 ClinicalShareService 寫入時一致。
-window.INNERA_DEMO_CLINIC_ID = "innera-demo-clinic";
-
-// P001 暫時代表你自己的真實資料。
-// 注意：真正的 userId 不要硬編碼在公開 repo。
-// MVP 測試時，登入同一個 Firebase 帳號後直接使用 auth.currentUser.uid。
-window.INNERA_REAL_SLEEP_PATIENT_ID = "P000001";
+window.INNERA_ADMIN_ENV = {
+  dashboardUrl: "dashboard.html",
+  staffActivationUrl:
+    "https://clinician.innerahealthcare.com/staff-activate.html"
+};

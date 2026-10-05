@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>心域 Innera｜平台登入</title>
+
+  <link
+    rel="stylesheet"
+    href="./css/login.css"
+  >
+</head>
+
+<body>
+
+  <main class="login-page">
+
+    <section class="login-card">
+
+      <div class="brand">
+        <h1>心域 Innera</h1>
+
+        <p>
+          Platform Administration
+        </p>
+      </div>
+
+
+      <div class="login-heading">
+
+        <h2>平台管理登入</h2>
+
+        <p>
+          僅限心域平台管理人員使用
+        </p>
+
+      </div>
+
+
+      <form id="adminLoginForm">
+
+        <div class="form-group">
+
+          <label for="email">
+            Email
+          </label>
+
+          <input
+            id="email"
+            type="email"
+            autocomplete="email"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="password">
+            密碼
+          </label>
+
+          <input
+            id="password"
+            type="password"
+            autocomplete="current-password"
+            required
+          >
+
+        </div>
+
+
+        <div
+          id="loginMessage"
+          class="login-message"
+        ></div>
+
+
+        <button
+          id="loginButton"
+          type="submit"
+          class="login-button"
+        >
+          登入平台
+        </button>
+
+      </form>
+
+    </section>
+
+  </main>
+
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+
+
+  <script src="./js/firebase-config-demo.js"></script>
+
+  <script src="./js/admin-auth.js"></script>
+
+</body>
+
+</html>

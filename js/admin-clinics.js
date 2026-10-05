@@ -331,7 +331,7 @@
 
       const activationUrl =
         new URL(
-          "https://2019chenqq.github.io/Innera_clinician/staff-activate.html"
+          window.INNERA_ADMIN_ENV.staffActivationUrl
         );
 
       activationUrl.searchParams.set(

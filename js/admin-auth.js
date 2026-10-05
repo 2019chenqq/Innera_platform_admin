@@ -123,7 +123,7 @@
 
 
     window.location.href =
-      "./dashboard.html";
+      window.INNERA_ADMIN_ENV.dashboardUrl;
 
   }
 
@@ -165,7 +165,7 @@
               ) {
 
                 window.location.href =
-                  "./dashboard.html";
+                  window.INNERA_ADMIN_ENV.dashboardUrl;
 
               }
 
