@@ -22,6 +22,11 @@
 
   function initFirebase() {
     ensureFirebaseLoaded();
+    const expected = window.INNERA_ADMIN_ENV?.projectId;
+    if (!expected || window.INNERA_FIREBASE_CONFIG?.projectId !== expected) {
+      throw new Error("管理後台環境設定不一致，已停止操作。");
+    }
+
 
     if (window.firebase.apps && window.firebase.apps.length > 0) {
       app = window.firebase.app();
@@ -29,6 +34,10 @@
       app = window.firebase.initializeApp(
         window.INNERA_FIREBASE_CONFIG
       );
+    }
+
+    if (window.firebase.app().options.projectId !== expected) {
+      throw new Error("管理後台 Firebase 專案不一致，已停止操作。");
     }
 
     auth = window.firebase.auth();
@@ -44,9 +53,7 @@
   }
 
   async function getCurrentUser() {
-    if (!auth) {
-      initFirebase();
-    }
+    initFirebase();
 
     return new Promise((resolve) => {
       const unsubscribe =
@@ -58,9 +65,7 @@
   }
 
   async function getPlatformAdminProfile(uid) {
-    if (!db) {
-      initFirebase();
-    }
+    initFirebase();
 
     const doc =
       await db
@@ -129,27 +134,21 @@
   }
 
   async function logout() {
-    if (!auth) {
-      initFirebase();
-    }
+    initFirebase();
 
     await auth.signOut();
 
-    window.location.href = "./index.html";
+    window.location.href = window.INNERA_ADMIN_ENV.loginUrl;
   }
 
   function getDb() {
-    if (!db) {
-      initFirebase();
-    }
+    initFirebase();
 
     return db;
   }
 
   function getAuth() {
-    if (!auth) {
-      initFirebase();
-    }
+    initFirebase();
 
     return auth;
   }
@@ -192,12 +191,12 @@
             `;
           }
 
+          window.location.href = window.INNERA_ADMIN_ENV.loginUrl;
           return;
         }
 
         console.log(
-          "[Admin] Platform admin authenticated:",
-          result.profile
+          "[Admin] Platform admin authenticated"
         );
 
         document.dispatchEvent(
@@ -211,8 +210,7 @@
 
       } catch (error) {
         console.error(
-          "[Admin] 初始化失敗:",
-          error
+          "[Admin] 初始化失敗；請確認環境設定與登入權限"
         );
 
         const clinicList =
@@ -223,7 +221,7 @@
         if (clinicList) {
           clinicList.innerHTML = `
             <div class="empty-state">
-              平台管理後台初始化失敗。
+              平台管理後台初始化失敗；請確認環境設定與登入權限。
             </div>
           `;
         }

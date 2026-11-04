@@ -1,0 +1,7 @@
+{
+  "targets": {
+    "innera-demo": {
+      "hosting": { "admin-demo": ["REPLACE_WITH_VERIFIED_DEMO_SITE_ID"] }
+    }
+  }
+}

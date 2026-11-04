@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "moodsogood-9e45b"
-  }
+  },
+  "targets": {
+    "innera-demo": {
+      "hosting": {
+        "admin-demo": [
+          "innera-demo-admin"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

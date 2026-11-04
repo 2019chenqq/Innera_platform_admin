@@ -205,6 +205,15 @@
           `;
         })
         .join("");
+
+    // External names/IDs enter the new navigation through DOM properties only.
+    clinicList.querySelectorAll(".clinic-row").forEach((row) => {
+      const link = document.createElement("a");
+      link.className = "secondary-button clinic-details-link";
+      link.textContent = "查看詳情";
+      link.href = "#clinic/" + encodeURIComponent(row.dataset.clinicId);
+      row.querySelector(".clinic-actions").prepend(link);
+    });
   }
 
 
@@ -225,7 +234,9 @@
       }
 
 
-      const functions =
+      window.InneraAdminCore.init();
+
+        const functions =
         firebase
           .app()
           .functions("asia-east1");
@@ -245,8 +256,7 @@
 
 
       console.log(
-        "[Admin] 更新院所狀態成功",
-        result.data
+        "[Admin] 更新院所狀態成功"
       );
 
 
@@ -256,14 +266,12 @@
     } catch (error) {
 
       console.error(
-        "[Admin] 更新院所狀態失敗:",
-        error
+        "[Admin] 更新院所狀態流程未完成"
       );
 
 
       alert(
-        error.message ||
-        "更新院所狀態失敗。"
+        "無法確認院所狀態更新結果，請重新整理清單確認。"
       );
 
 
@@ -291,6 +299,8 @@
       return;
     }
 
+    let rotated = false;
+    let invitationReady = false;
     try {
       if (button) {
         button.disabled = true;
@@ -298,7 +308,9 @@
           "寄送中...";
       }
 
-      const functions =
+      window.InneraAdminCore.init();
+
+        const functions =
         firebase
           .app()
           .functions("asia-east1");
@@ -312,6 +324,9 @@
         await resendInvite({
           clinicId
         });
+
+      if (result.data?.success !== true) throw new Error("Unconfirmed result");
+      rotated = true;
 
       const {
         inviteId,
@@ -329,6 +344,7 @@
         );
       }
 
+      invitationReady = true;
       const activationUrl =
         new URL(
           window.INNERA_ADMIN_ENV.staffActivationUrl
@@ -358,18 +374,20 @@
         );
 
       alert(
-        `「${clinicName}」的管理員啟用信已重新寄出。`
+        "啟用邀請已輪替，Firebase 已接受寄信請求；不代表收件人已收到郵件。"
       );
 
     } catch (error) {
       console.error(
-        "[Admin] 重新寄送管理員啟用信失敗:",
-        error
+        "[Admin] initial admin invitation flow did not complete"
       );
 
       alert(
-        error.message ||
-        "重新寄送管理員啟用信失敗。"
+        rotated
+          ? invitationReady
+            ? "啟用邀請已輪替，但寄信請求未完成，舊邀請連結已失效。請確認後再重寄啟用信。"
+            : "啟用邀請已輪替，但回傳資料不完整。請確認後再重寄啟用信。"
+          : "無法確認啟用邀請是否已輪替；寄信流程未完成，請確認院所狀態後再操作。"
       );
 
     } finally {
@@ -538,8 +556,7 @@
     } catch (error) {
 
       console.error(
-        "[Admin] 載入 clinics 失敗:",
-        error
+        "[Admin] 載入 clinics 失敗"
       );
 
 

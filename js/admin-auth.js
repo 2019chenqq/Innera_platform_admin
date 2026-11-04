@@ -22,6 +22,11 @@
     }
 
 
+    const expected = window.INNERA_ADMIN_ENV?.projectId;
+    if (!expected || window.INNERA_FIREBASE_CONFIG?.projectId !== expected) {
+      throw new Error("管理後台環境設定不一致，已停止操作。");
+    }
+
     if (
       window.firebase.apps &&
       window.firebase.apps.length > 0
@@ -37,6 +42,10 @@
 
     }
 
+
+    if (window.firebase.app().options.projectId !== expected) {
+      throw new Error("管理後台 Firebase 專案不一致，已停止操作。");
+    }
 
     auth =
       window.firebase.auth();
@@ -67,6 +76,7 @@
 
 
   async function login(email, password) {
+    initFirebase();
 
     const credential =
       await auth.signInWithEmailAndPassword(
@@ -173,8 +183,7 @@
             } catch (error) {
 
               console.error(
-                "[Admin Login]",
-                error
+                "[Admin Login] 登入狀態查詢失敗"
               );
 
             }
@@ -233,12 +242,13 @@
       } catch (error) {
 
         console.error(
-          "[Admin Login] 初始化失敗",
-          error
+          "[Admin Login] 初始化失敗；請確認環境設定"
         );
 
         message.textContent =
-          "平台登入初始化失敗。";
+          "平台登入初始化失敗；請確認環境設定。";
+        button.disabled = true;
+        return;
 
       }
 
@@ -270,8 +280,7 @@
           } catch (error) {
 
             console.error(
-              "[Admin Login]",
-              error
+              "[Admin Login] 登入失敗"
             );
 
 
@@ -306,7 +315,6 @@
               default:
 
                 message.textContent =
-                  error.message ||
                   "登入失敗。";
 
             }

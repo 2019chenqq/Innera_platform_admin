@@ -139,7 +139,12 @@
       }
 
 
+      let created = false;
+      let invitationReady = false;
+      let emailSent = false;
       try {
+
+        window.InneraAdminCore.init();
 
         const functions =
           firebase
@@ -161,10 +166,9 @@
           });
 
 
-        console.log(
-          "[Admin] createClinic success",
-          result.data
-        );
+        if (result.data?.success !== true) throw new Error("Unconfirmed result");
+        created = true;
+        console.info("[Admin] clinic creation confirmed");
 
         const {
           inviteId,
@@ -184,6 +188,7 @@
         }
 
 
+        invitationReady = true;
         const activationUrl =
           new URL(
             window.INNERA_ADMIN_ENV.staffActivationUrl
@@ -199,8 +204,6 @@
           token
         );
 
-
-        let emailSent = false;
 
         try {
           await firebase
@@ -220,8 +223,7 @@
 
         } catch (emailError) {
           console.error(
-            "[Admin] activation email failed",
-            emailError
+            "[Admin] activation email request failed"
           );
         }
 
@@ -229,11 +231,11 @@
         if (message) {
           if (emailSent) {
             message.textContent =
-              `院所建立成功（${clinicCode}），管理員啟用信已寄出。`;
+              "院所及啟用邀請已建立，Firebase 已接受寄信請求；不代表收件人已收到郵件。";
 
           } else {
             message.textContent =
-              `院所已建立（${clinicCode}），但管理員啟用信寄送失敗。`;
+              "院所及啟用邀請已建立，但寄信請求失敗。請勿再次建立院所，可由院所清單重寄啟用信。";
           }
         }
 
@@ -254,13 +256,12 @@
       } catch (error) {
 
         console.error(
-          "[Admin] createClinic failed",
-          error
+          "[Admin] create clinic flow did not complete"
         );
 
 
         let text =
-          "建立院所失敗。";
+          "目前無法確認院所是否已建立。請重新整理院所清單確認，勿直接再次建立。";
 
 
         switch (
@@ -270,7 +271,6 @@
         case "functions/already-exists":
 
           text =
-            error.message ||
             "已有相同的待處理資料。";
 
           break;
@@ -295,7 +295,6 @@
           case "functions/invalid-argument":
 
             text =
-              error.message ||
               "輸入資料格式不正確。";
 
             break;
@@ -304,8 +303,15 @@
           default:
 
             text =
-              error.message ||
-              "建立院所失敗。";
+              "目前無法確認院所是否已建立。請重新整理院所清單確認，勿直接再次建立。";
+        }
+
+        if (created) {
+          text = emailSent
+            ? "院所及邀請已建立，Firebase 已接受寄信請求；清單更新未完成，請重新整理確認。"
+            : invitationReady
+              ? "院所及邀請已建立，但寄信流程未完成。請勿再次建立院所，請由清單確認並重寄啟用信。"
+              : "院所已建立，但回傳的邀請資料不完整。請重新整理院所清單確認，勿再次建立。";
         }
 
 

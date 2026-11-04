@@ -1,0 +1,9 @@
+{
+  "hosting": {
+    "target": "admin-demo",
+    "public": "dist/admin-demo",
+    "ignore": [],
+    "headers": [{ "source": "**", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] }],
+    "predeploy": ["node scripts/demo-hosting.cjs --check --project innera-demo --target admin-demo --config firebase.hosting.demo.json"]
+  }
+}

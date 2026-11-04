@@ -2,6 +2,44 @@
   box-sizing: border-box;
 }
 
+[hidden] { display: none !important; }
+
+.clinic-details-link { text-decoration: none; white-space: nowrap; font-size: 13px; }
+.detail-back { display: inline-block; color: #276e72; margin-bottom: 12px; }
+.detail-stack { display: grid; gap: 24px; }
+.detail-card { background: #fff; border: 1px solid #e4e8ef; border-radius: 16px; padding: 24px; }
+.detail-card h2 { margin: 0; font-size: 18px; }
+.detail-caption { color: #596b7a; font-size: 14px; line-height: 1.6; }
+.detail-notice { padding: 14px 16px; background: #edf7f7; border: 1px solid #cee4e4; border-radius: 10px; color: #285d61; line-height: 1.6; }
+.detail-grid, .detail-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 24px; }
+.detail-grid { margin: 24px 0; }
+.detail-field dt { color: #647386; font-size: 13px; margin-bottom: 7px; }
+.detail-field dd { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.6; }
+.detail-full { grid-column: 1 / -1; }
+.detail-form-grid .form-group { margin: 0; }
+.operations-form .modal-actions { margin-top: 24px; }
+.trial-form .modal-actions { margin-top: 24px; }
+.trial-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.trial-form { margin-top: 24px; }
+.trial-form h3 { font-size: 16px; }
+.trial-form input[type="date"] { min-width: 0; max-width: 100%; }
+.detail-card .form-message { margin: 16px 0 0; line-height: 1.6; }
+.form-group select, .form-group textarea { width: 100%; padding: 11px 12px; border: 1px solid #dbe1ea; border-radius: 9px; font: inherit; background: #fff; color: inherit; }
+.form-group textarea { resize: vertical; }
+.form-group select:focus, .form-group textarea:focus { outline: 2px solid #879dcc; outline-offset: 1px; }
+.form-group [aria-invalid="true"] { border-color: #b54747; }
+.detail-card button:disabled { opacity: .55; cursor: not-allowed; }
+.detail-card :focus-visible, .detail-back:focus-visible, .clinic-details-link:focus-visible { outline: 2px solid #277b83; outline-offset: 3px; }
+#clinicDetailView { min-width: 0; }
+.mock-controls { display: flex; flex-wrap: wrap; gap: 12px 20px; margin: 0 0 24px; }
+.mock-controls strong, .mock-controls nav { flex-basis: 100%; }
+.mock-controls label { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; }
+
+@media (max-width: 768px) {
+  .detail-grid, .detail-form-grid { grid-template-columns: minmax(0, 1fr); }
+  .detail-card { padding: 20px 16px; }
+}
+
 body {
   margin: 0;
   font-family:
@@ -290,7 +328,7 @@ body {
   justify-content: flex-end;
   align-items: center;
   gap: 10px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
 

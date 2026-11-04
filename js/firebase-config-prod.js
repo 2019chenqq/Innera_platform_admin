@@ -12,6 +12,8 @@ window.INNERA_FIREBASE_CONFIG = {
 };
 
 window.INNERA_ADMIN_ENV = {
+  projectId: "moodsogood-9e45b",
+  loginUrl: "index.html",
   dashboardUrl: "dashboard.html",
   staffActivationUrl:
     "https://clinician.innerahealthcare.com/staff-activate.html"

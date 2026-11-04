@@ -12,6 +12,8 @@ window.INNERA_FIREBASE_CONFIG = {
 };
 
 window.INNERA_ADMIN_ENV = {
+  projectId: "innera-demo",
+  loginUrl: "index.demo.html",
   dashboardUrl: "dashboard.demo.html",
   staffActivationUrl:
     "https://clinician.innerahealthcare.com/staff-activate-demo.html"
