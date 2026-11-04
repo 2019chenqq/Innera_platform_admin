@@ -3,6 +3,7 @@
     {
       "source": "functions",
       "codebase": "default",
+      "predeploy": ["node \"$RESOURCE_DIR/scripts/block-deploy.cjs\""],
       "disallowLegacyRuntimeConfig": true,
       "ignore": [
         "node_modules",
