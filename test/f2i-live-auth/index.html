@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="zh-Hant"><meta charset="utf-8"><title>F2-I Demo 權限補驗（本機限定）</title>
+<body><h1>Demo 非管理員權限補驗</h1>
+<p>innera-demo / asia-east1。僅接受既有合成醫師帳號；登入狀態只留在記憶體。</p>
+<form id="login" autocomplete="off">
+<label>Email <input id="email" type="email" value="encrypted-sleep-doctor@example.test" readonly></label>
+<label>密碼 <input id="password" type="password" autocomplete="off" required></label>
+<button id="submit">登入</button></form>
+<p id="auth" role="status">尚未登入</p>
+<button id="probe" disabled>執行兩項拒絕測試（僅一次）</button>
+<button id="logout">登出</button><pre id="result"></pre>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-functions-compat.js"></script>
+<script src="/config.js"></script><script src="/probe.js"></script></body></html>
